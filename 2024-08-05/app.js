@@ -1,41 +1,19 @@
 const express = require('express');
 
 const app = express();
+app.use(express.json()); //configura servidor para receber json nas requisições
 
-const users = [
-    { id: 1, name: 'Alice', status: 'Disponível' },
-    { id: 2, name: 'Bob', status: 'Ocupado' },
-    { id: 3, name: 'Charlie', status: 'Ausente'},
-]
-
-app.get('/api/users', (req, res) => {
-    console.log(req.query);
-
-    const status = req.query.status;
-    if (status) {
-        return res.status(200).json(users.filter(user => user.status === status));
+const times = ["palmeiras", "corinthians", "flamengo"]
+const time = ""
+app.post('/api/new-game', (req, res) => {
+    const getRandomTime = () => {
+        const randomIndex = Math.floor(Math.random() * times.length);
+        return times[randomIndex];
     }
 
-    return res.status(200).json(users);
-})
+    time = getRandomTime()
 
-app.get('/api/users/:id', (req, res) => {
-    console.log(req.params);
-
-    const id = parseInt(req.params.id); // extrai o id da url
-    console.log(id)
-
-    if (isNaN(id)) { // NaN = not a number
-        return res.status(400).json({ error: 'O "id" do usuário deve ser um número.' });
-    } // verifica se o id informado era realmente um numero (int)
-
-    const user = users.find(user => user.id === id);
-    console.log(user);
-    if (!user) {
-        return res.status(404).json({ error: 'Usuário não encontrado.'});
-    }
-
-    return res.status(200).json(user);
+    res.json({ time });
 })
 
 app.listen(3000, () => {
